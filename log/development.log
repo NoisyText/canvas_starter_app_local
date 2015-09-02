@@ -1,0 +1,163 @@
+  [1m[36mSQL (1.8ms)[0m  [1mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35m (21.8ms)[0m  CREATE TABLE "accounts" ("id" serial primary key, "name" character varying, "domain" character varying, "lti_key" character varying, "lti_secret" character varying, "created_at" timestamp, "updated_at" timestamp, "canvas_uri" character varying(2048), "code" character varying) 
+  [1m[36m (1.4ms)[0m  [1mCREATE  INDEX  "index_accounts_on_code" ON "accounts" USING btree ("code")[0m
+  [1m[35m (1.3ms)[0m  CREATE UNIQUE INDEX  "index_accounts_on_domain" ON "accounts" USING btree ("domain")
+  [1m[36m (4.8ms)[0m  [1mCREATE TABLE "authentications" ("id" serial primary key, "user_id" integer, "provider" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "json_response" text, "uid" character varying, "provider_avatar" character varying, "username" character varying, "provider_url" character varying(2048), "encrypted_token" character varying, "encrypted_token_salt" character varying, "encrypted_token_iv" character varying, "encrypted_secret" character varying, "encrypted_secret_salt" character varying, "encrypted_secret_iv" character varying, "encrypted_refresh_token" character varying, "encrypted_refresh_token_salt" character varying, "encrypted_refresh_token_iv" character varying) [0m
+  [1m[35m (1.2ms)[0m  CREATE  INDEX  "index_authentications_on_provider_and_uid" ON "authentications" USING btree ("provider", "uid")
+  [1m[36m (2.1ms)[0m  [1mCREATE  INDEX  "index_authentications_on_user_id" ON "authentications" USING btree ("user_id")[0m
+  [1m[35m (4.5ms)[0m  CREATE TABLE "external_identifiers" ("id" serial primary key, "user_id" integer, "identifier" character varying, "provider" character varying, "created_at" timestamp, "updated_at" timestamp, "custom_canvas_user_id" character varying) 
+  [1m[36m (1.2ms)[0m  [1mCREATE  INDEX  "index_external_identifiers_on_identifier_and_provider" ON "external_identifiers" USING btree ("identifier", "provider")[0m
+  [1m[35m (1.6ms)[0m  CREATE  INDEX  "index_external_identifiers_on_user_id" ON "external_identifiers" USING btree ("user_id")
+  [1m[36m (3.8ms)[0m  [1mCREATE TABLE "permissions" ("id" serial primary key, "role_id" integer, "user_id" integer, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (1.9ms)[0m  CREATE  INDEX  "index_permissions_on_role_id_and_user_id" ON "permissions" USING btree ("role_id", "user_id")
+  [1m[36m (8.4ms)[0m  [1mCREATE TABLE "profiles" ("id" serial primary key, "user_id" integer, "location" character varying, "lat" decimal(15,10), "lng" decimal(15,10), "about" text, "city" character varying, "state_id" integer, "country_id" integer, "language_id" integer, "profile_views" integer, "policy" text, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "website" character varying, "blog" character varying, "twitter" character varying, "facebook" character varying, "linkedin" character varying) [0m
+  [1m[35m (4.1ms)[0m  CREATE TABLE "roles" ("id" serial primary key, "name" character varying, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (5.6ms)[0m  [1mCREATE TABLE "user_accounts" ("id" serial primary key, "user_id" integer, "account_id" integer, "role" character varying, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (1.5ms)[0m  CREATE  INDEX  "index_user_accounts_on_user_id_and_account_id" ON "user_accounts" USING btree ("user_id", "account_id")
+  [1m[36m (5.9ms)[0m  [1mCREATE TABLE "users" ("id" serial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" character varying, "last_sign_in_ip" character varying, "created_at" timestamp, "updated_at" timestamp, "name" character varying, "confirmation_token" character varying, "confirmed_at" timestamp, "confirmation_sent_at" timestamp, "unconfirmed_email" character varying, "role" integer, "account_id" integer, "username" character varying, "avatar" character varying, "time_zone" character varying DEFAULT 'UTC', "password_salt" character varying, "lti_key" character varying, "lti_secret" character varying, "provider_avatar" character varying, "profile_privacy" character varying DEFAULT 'private', "profile_privacy_token" character varying, "active_avatar" character varying DEFAULT 'none') [0m
+  [1m[35m (1.1ms)[0m  CREATE  INDEX  "index_users_on_account_id" ON "users" USING btree ("account_id")
+  [1m[36m (1.2ms)[0m  [1mCREATE UNIQUE INDEX  "index_users_on_email" ON "users" USING btree ("email")[0m
+  [1m[35m (1.3ms)[0m  CREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users" USING btree ("reset_password_token")
+  [1m[36m (4.7ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL) [0m
+  [1m[35m (1.3ms)[0m  CREATE UNIQUE INDEX  "unique_schema_migrations" ON "schema_migrations"  ("version")
+  [1m[36m (0.4ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35m (0.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20150318170605')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20120209004849')[0m
+  [1m[35m (0.3ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20140908224532')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20141007183504')[0m
+  [1m[35m (0.3ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20141007185601')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20141007190106')[0m
+  [1m[35m (0.3ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20141007190655')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20150312162723')[0m
+  [1m[35mSQL (0.4ms)[0m  CREATE EXTENSION IF NOT EXISTS "plpgsql"
+  [1m[36m (260.5ms)[0m  [1mCREATE TABLE "accounts" ("id" serial primary key, "name" character varying, "domain" character varying, "lti_key" character varying, "lti_secret" character varying, "created_at" timestamp, "updated_at" timestamp, "canvas_uri" character varying(2048), "code" character varying) [0m
+  [1m[35m (1.5ms)[0m  CREATE  INDEX  "index_accounts_on_code" ON "accounts" USING btree ("code")
+  [1m[36m (1.4ms)[0m  [1mCREATE UNIQUE INDEX  "index_accounts_on_domain" ON "accounts" USING btree ("domain")[0m
+  [1m[35m (5.0ms)[0m  CREATE TABLE "authentications" ("id" serial primary key, "user_id" integer, "provider" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "json_response" text, "uid" character varying, "provider_avatar" character varying, "username" character varying, "provider_url" character varying(2048), "encrypted_token" character varying, "encrypted_token_salt" character varying, "encrypted_token_iv" character varying, "encrypted_secret" character varying, "encrypted_secret_salt" character varying, "encrypted_secret_iv" character varying, "encrypted_refresh_token" character varying, "encrypted_refresh_token_salt" character varying, "encrypted_refresh_token_iv" character varying) 
+  [1m[36m (1.2ms)[0m  [1mCREATE  INDEX  "index_authentications_on_provider_and_uid" ON "authentications" USING btree ("provider", "uid")[0m
+  [1m[35m (1.7ms)[0m  CREATE  INDEX  "index_authentications_on_user_id" ON "authentications" USING btree ("user_id")
+  [1m[36m (4.5ms)[0m  [1mCREATE TABLE "external_identifiers" ("id" serial primary key, "user_id" integer, "identifier" character varying, "provider" character varying, "created_at" timestamp, "updated_at" timestamp, "custom_canvas_user_id" character varying) [0m
+  [1m[35m (1.1ms)[0m  CREATE  INDEX  "index_external_identifiers_on_identifier_and_provider" ON "external_identifiers" USING btree ("identifier", "provider")
+  [1m[36m (2.0ms)[0m  [1mCREATE  INDEX  "index_external_identifiers_on_user_id" ON "external_identifiers" USING btree ("user_id")[0m
+  [1m[35m (3.2ms)[0m  CREATE TABLE "permissions" ("id" serial primary key, "role_id" integer, "user_id" integer, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (1.5ms)[0m  [1mCREATE  INDEX  "index_permissions_on_role_id_and_user_id" ON "permissions" USING btree ("role_id", "user_id")[0m
+  [1m[35m (4.4ms)[0m  CREATE TABLE "profiles" ("id" serial primary key, "user_id" integer, "location" character varying, "lat" decimal(15,10), "lng" decimal(15,10), "about" text, "city" character varying, "state_id" integer, "country_id" integer, "language_id" integer, "profile_views" integer, "policy" text, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "website" character varying, "blog" character varying, "twitter" character varying, "facebook" character varying, "linkedin" character varying) 
+  [1m[36m (3.9ms)[0m  [1mCREATE TABLE "roles" ("id" serial primary key, "name" character varying, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (7.5ms)[0m  CREATE TABLE "user_accounts" ("id" serial primary key, "user_id" integer, "account_id" integer, "role" character varying, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (1.3ms)[0m  [1mCREATE  INDEX  "index_user_accounts_on_user_id_and_account_id" ON "user_accounts" USING btree ("user_id", "account_id")[0m
+  [1m[35m (5.6ms)[0m  CREATE TABLE "users" ("id" serial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" character varying, "last_sign_in_ip" character varying, "created_at" timestamp, "updated_at" timestamp, "name" character varying, "confirmation_token" character varying, "confirmed_at" timestamp, "confirmation_sent_at" timestamp, "unconfirmed_email" character varying, "role" integer, "account_id" integer, "username" character varying, "avatar" character varying, "time_zone" character varying DEFAULT 'UTC', "password_salt" character varying, "lti_key" character varying, "lti_secret" character varying, "provider_avatar" character varying, "profile_privacy" character varying DEFAULT 'private', "profile_privacy_token" character varying, "active_avatar" character varying DEFAULT 'none') 
+  [1m[36m (1.3ms)[0m  [1mCREATE  INDEX  "index_users_on_account_id" ON "users" USING btree ("account_id")[0m
+  [1m[35m (1.3ms)[0m  CREATE UNIQUE INDEX  "index_users_on_email" ON "users" USING btree ("email")
+  [1m[36m (1.0ms)[0m  [1mCREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users" USING btree ("reset_password_token")[0m
+  [1m[35m (2.6ms)[0m  CREATE TABLE "schema_migrations" ("version" character varying NOT NULL) 
+  [1m[36m (1.2ms)[0m  [1mCREATE UNIQUE INDEX  "unique_schema_migrations" ON "schema_migrations"  ("version")[0m
+  [1m[35m (0.4ms)[0m  SELECT version FROM "schema_migrations"
+  [1m[36m (0.5ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20150318170605')[0m
+  [1m[35m (0.3ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20120209004849')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20140908224532')[0m
+  [1m[35m (0.3ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20141007183504')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20141007185601')[0m
+  [1m[35m (0.2ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20141007190106')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20141007190655')[0m
+  [1m[35m (0.4ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20150312162723')
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36mSQL (0.5ms)[0m  [1mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35m (6.2ms)[0m  DROP TABLE "accounts" CASCADE
+  [1m[36m (5.6ms)[0m  [1mCREATE TABLE "accounts" ("id" serial primary key, "name" character varying, "domain" character varying, "lti_key" character varying, "lti_secret" character varying, "created_at" timestamp, "updated_at" timestamp, "canvas_uri" character varying(2048), "code" character varying) [0m
+  [1m[35m (1.6ms)[0m  CREATE  INDEX  "index_accounts_on_code" ON "accounts" USING btree ("code")
+  [1m[36m (1.3ms)[0m  [1mCREATE UNIQUE INDEX  "index_accounts_on_domain" ON "accounts" USING btree ("domain")[0m
+  [1m[35m (2.8ms)[0m  DROP TABLE "authentications" CASCADE
+  [1m[36m (7.4ms)[0m  [1mCREATE TABLE "authentications" ("id" serial primary key, "user_id" integer, "provider" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "json_response" text, "uid" character varying, "provider_avatar" character varying, "username" character varying, "provider_url" character varying(2048), "encrypted_token" character varying, "encrypted_token_salt" character varying, "encrypted_token_iv" character varying, "encrypted_secret" character varying, "encrypted_secret_salt" character varying, "encrypted_secret_iv" character varying, "encrypted_refresh_token" character varying, "encrypted_refresh_token_salt" character varying, "encrypted_refresh_token_iv" character varying) [0m
+  [1m[35m (1.5ms)[0m  CREATE  INDEX  "index_authentications_on_provider_and_uid" ON "authentications" USING btree ("provider", "uid")
+  [1m[36m (1.2ms)[0m  [1mCREATE  INDEX  "index_authentications_on_user_id" ON "authentications" USING btree ("user_id")[0m
+  [1m[35m (2.7ms)[0m  DROP TABLE "external_identifiers" CASCADE
+  [1m[36m (4.7ms)[0m  [1mCREATE TABLE "external_identifiers" ("id" serial primary key, "user_id" integer, "identifier" character varying, "provider" character varying, "created_at" timestamp, "updated_at" timestamp, "custom_canvas_user_id" character varying) [0m
+  [1m[35m (1.5ms)[0m  CREATE  INDEX  "index_external_identifiers_on_identifier_and_provider" ON "external_identifiers" USING btree ("identifier", "provider")
+  [1m[36m (1.2ms)[0m  [1mCREATE  INDEX  "index_external_identifiers_on_user_id" ON "external_identifiers" USING btree ("user_id")[0m
+  [1m[35m (1.7ms)[0m  DROP TABLE "permissions" CASCADE
+  [1m[36m (3.1ms)[0m  [1mCREATE TABLE "permissions" ("id" serial primary key, "role_id" integer, "user_id" integer, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (1.4ms)[0m  CREATE  INDEX  "index_permissions_on_role_id_and_user_id" ON "permissions" USING btree ("role_id", "user_id")
+  [1m[36m (2.1ms)[0m  [1mDROP TABLE "profiles" CASCADE[0m
+  [1m[35m (6.5ms)[0m  CREATE TABLE "profiles" ("id" serial primary key, "user_id" integer, "location" character varying, "lat" decimal(15,10), "lng" decimal(15,10), "about" text, "city" character varying, "state_id" integer, "country_id" integer, "language_id" integer, "profile_views" integer, "policy" text, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "website" character varying, "blog" character varying, "twitter" character varying, "facebook" character varying, "linkedin" character varying) 
+  [1m[36m (2.3ms)[0m  [1mDROP TABLE "roles" CASCADE[0m
+  [1m[35m (4.4ms)[0m  CREATE TABLE "roles" ("id" serial primary key, "name" character varying, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (2.5ms)[0m  [1mDROP TABLE "user_accounts" CASCADE[0m
+  [1m[35m (4.9ms)[0m  CREATE TABLE "user_accounts" ("id" serial primary key, "user_id" integer, "account_id" integer, "role" character varying, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (1.9ms)[0m  [1mCREATE  INDEX  "index_user_accounts_on_user_id_and_account_id" ON "user_accounts" USING btree ("user_id", "account_id")[0m
+  [1m[35m (3.4ms)[0m  DROP TABLE "users" CASCADE
+  [1m[36m (6.6ms)[0m  [1mCREATE TABLE "users" ("id" serial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" character varying, "last_sign_in_ip" character varying, "created_at" timestamp, "updated_at" timestamp, "name" character varying, "confirmation_token" character varying, "confirmed_at" timestamp, "confirmation_sent_at" timestamp, "unconfirmed_email" character varying, "role" integer, "account_id" integer, "username" character varying, "avatar" character varying, "time_zone" character varying DEFAULT 'UTC', "password_salt" character varying, "lti_key" character varying, "lti_secret" character varying, "provider_avatar" character varying, "profile_privacy" character varying DEFAULT 'private', "profile_privacy_token" character varying, "active_avatar" character varying DEFAULT 'none') [0m
+  [1m[35m (1.7ms)[0m  CREATE  INDEX  "index_users_on_account_id" ON "users" USING btree ("account_id")
+  [1m[36m (1.6ms)[0m  [1mCREATE UNIQUE INDEX  "index_users_on_email" ON "users" USING btree ("email")[0m
+  [1m[35m (1.4ms)[0m  CREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users" USING btree ("reset_password_token")
+  [1m[36m (0.4ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35mSQL (0.3ms)[0m  CREATE EXTENSION IF NOT EXISTS "plpgsql"
+  [1m[36m (3.5ms)[0m  [1mDROP TABLE "accounts" CASCADE[0m
+  [1m[35m (6.8ms)[0m  CREATE TABLE "accounts" ("id" serial primary key, "name" character varying, "domain" character varying, "lti_key" character varying, "lti_secret" character varying, "created_at" timestamp, "updated_at" timestamp, "canvas_uri" character varying(2048), "code" character varying) 
+  [1m[36m (1.9ms)[0m  [1mCREATE  INDEX  "index_accounts_on_code" ON "accounts" USING btree ("code")[0m
+  [1m[35m (2.3ms)[0m  CREATE UNIQUE INDEX  "index_accounts_on_domain" ON "accounts" USING btree ("domain")
+  [1m[36m (2.9ms)[0m  [1mDROP TABLE "authentications" CASCADE[0m
+  [1m[35m (7.2ms)[0m  CREATE TABLE "authentications" ("id" serial primary key, "user_id" integer, "provider" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "json_response" text, "uid" character varying, "provider_avatar" character varying, "username" character varying, "provider_url" character varying(2048), "encrypted_token" character varying, "encrypted_token_salt" character varying, "encrypted_token_iv" character varying, "encrypted_secret" character varying, "encrypted_secret_salt" character varying, "encrypted_secret_iv" character varying, "encrypted_refresh_token" character varying, "encrypted_refresh_token_salt" character varying, "encrypted_refresh_token_iv" character varying) 
+  [1m[36m (1.5ms)[0m  [1mCREATE  INDEX  "index_authentications_on_provider_and_uid" ON "authentications" USING btree ("provider", "uid")[0m
+  [1m[35m (1.5ms)[0m  CREATE  INDEX  "index_authentications_on_user_id" ON "authentications" USING btree ("user_id")
+  [1m[36m (2.4ms)[0m  [1mDROP TABLE "external_identifiers" CASCADE[0m
+  [1m[35m (5.6ms)[0m  CREATE TABLE "external_identifiers" ("id" serial primary key, "user_id" integer, "identifier" character varying, "provider" character varying, "created_at" timestamp, "updated_at" timestamp, "custom_canvas_user_id" character varying) 
+  [1m[36m (1.5ms)[0m  [1mCREATE  INDEX  "index_external_identifiers_on_identifier_and_provider" ON "external_identifiers" USING btree ("identifier", "provider")[0m
+  [1m[35m (1.6ms)[0m  CREATE  INDEX  "index_external_identifiers_on_user_id" ON "external_identifiers" USING btree ("user_id")
+  [1m[36m (1.8ms)[0m  [1mDROP TABLE "permissions" CASCADE[0m
+  [1m[35m (2.9ms)[0m  CREATE TABLE "permissions" ("id" serial primary key, "role_id" integer, "user_id" integer, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (1.3ms)[0m  [1mCREATE  INDEX  "index_permissions_on_role_id_and_user_id" ON "permissions" USING btree ("role_id", "user_id")[0m
+  [1m[35m (2.8ms)[0m  DROP TABLE "profiles" CASCADE
+  [1m[36m (4.8ms)[0m  [1mCREATE TABLE "profiles" ("id" serial primary key, "user_id" integer, "location" character varying, "lat" decimal(15,10), "lng" decimal(15,10), "about" text, "city" character varying, "state_id" integer, "country_id" integer, "language_id" integer, "profile_views" integer, "policy" text, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "website" character varying, "blog" character varying, "twitter" character varying, "facebook" character varying, "linkedin" character varying) [0m
+  [1m[35m (1.8ms)[0m  DROP TABLE "roles" CASCADE
+  [1m[36m (5.6ms)[0m  [1mCREATE TABLE "roles" ("id" serial primary key, "name" character varying, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (2.5ms)[0m  DROP TABLE "user_accounts" CASCADE
+  [1m[36m (5.8ms)[0m  [1mCREATE TABLE "user_accounts" ("id" serial primary key, "user_id" integer, "account_id" integer, "role" character varying, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (1.7ms)[0m  CREATE  INDEX  "index_user_accounts_on_user_id_and_account_id" ON "user_accounts" USING btree ("user_id", "account_id")
+  [1m[36m (3.5ms)[0m  [1mDROP TABLE "users" CASCADE[0m
+  [1m[35m (6.3ms)[0m  CREATE TABLE "users" ("id" serial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" character varying, "last_sign_in_ip" character varying, "created_at" timestamp, "updated_at" timestamp, "name" character varying, "confirmation_token" character varying, "confirmed_at" timestamp, "confirmation_sent_at" timestamp, "unconfirmed_email" character varying, "role" integer, "account_id" integer, "username" character varying, "avatar" character varying, "time_zone" character varying DEFAULT 'UTC', "password_salt" character varying, "lti_key" character varying, "lti_secret" character varying, "provider_avatar" character varying, "profile_privacy" character varying DEFAULT 'private', "profile_privacy_token" character varying, "active_avatar" character varying DEFAULT 'none') 
+  [1m[36m (1.6ms)[0m  [1mCREATE  INDEX  "index_users_on_account_id" ON "users" USING btree ("account_id")[0m
+  [1m[35m (1.3ms)[0m  CREATE UNIQUE INDEX  "index_users_on_email" ON "users" USING btree ("email")
+  [1m[36m (1.2ms)[0m  [1mCREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users" USING btree ("reset_password_token")[0m
+  [1m[35m (0.4ms)[0m  SELECT version FROM "schema_migrations"
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mUser Load (3.4ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1  [["email", "admin@example.com"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.6ms)[0m  INSERT INTO "users" ("email", "encrypted_password", "confirmed_at", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["email", "admin@example.com"], ["encrypted_password", "$2a$10$r3fRyLmha/yrJ/RHBR0iIuUmA35r//RZOW/ECfKxOMETH.5phkZCu"], ["confirmed_at", "2015-09-01 21:44:14.816170"], ["created_at", "2015-09-01 21:44:14.816951"], ["updated_at", "2015-09-01 21:44:14.816951"]]
+  [1m[36mProfile Load (0.6ms)[0m  [1mSELECT  "profiles".* FROM "profiles" WHERE "profiles"."user_id" = $1 LIMIT 1[0m  [["user_id", 1]]
+  [1m[35mSQL (0.5ms)[0m  INSERT INTO "profiles" ("user_id", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"  [["user_id", 1], ["created_at", "2015-09-01 21:44:14.857204"], ["updated_at", "2015-09-01 21:44:14.857204"]]
+  [1m[36m (0.5ms)[0m  [1mCOMMIT[0m
+  [1m[35mRole Load (0.4ms)[0m  SELECT  "roles".* FROM "roles" WHERE "roles"."name" = $1 LIMIT 1  [["name", "administrator"]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mRole Exists (0.4ms)[0m  SELECT  1 AS one FROM "roles" WHERE "roles"."name" = 'administrator' LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "roles" ("name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"[0m  [["name", "administrator"], ["created_at", "2015-09-01 21:44:14.877784"], ["updated_at", "2015-09-01 21:44:14.877784"]]
+  [1m[35m (0.3ms)[0m  COMMIT
+  [1m[36mRole Exists (1.0ms)[0m  [1mSELECT  1 AS one FROM "roles" INNER JOIN "permissions" ON "roles"."id" = "permissions"."role_id" WHERE "permissions"."user_id" = $1 AND "roles"."id" = $2 LIMIT 1[0m  [["user_id", 1], ["id", 1]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.5ms)[0m  [1mINSERT INTO "permissions" ("user_id", "role_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["user_id", 1], ["role_id", 1], ["created_at", "2015-09-01 21:44:14.902731"], ["updated_at", "2015-09-01 21:44:14.902731"]]
+  [1m[35m (0.3ms)[0m  COMMIT
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mAuthentication Exists (0.7ms)[0m  SELECT  1 AS one FROM "authentications" WHERE "authentications"."user_id" = $1 LIMIT 1  [["user_id", 1]]
+  [1m[36mAuthentication Exists (0.2ms)[0m  [1mSELECT  1 AS one FROM "authentications" WHERE "authentications"."user_id" = $1 LIMIT 1[0m  [["user_id", 1]]
+  [1m[35mSQL (0.3ms)[0m  UPDATE "users" SET "role" = $1, "updated_at" = $2 WHERE "users"."id" = $3  [["role", 2], ["updated_at", "2015-09-01 21:44:14.914739"], ["id", 1]]
+  [1m[36m (0.4ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mAuthentication Exists (0.3ms)[0m  [1mSELECT  1 AS one FROM "authentications" WHERE "authentications"."user_id" = $1 LIMIT 1[0m  [["user_id", 1]]
+  [1m[35mAuthentication Exists (0.2ms)[0m  SELECT  1 AS one FROM "authentications" WHERE "authentications"."user_id" = $1 LIMIT 1  [["user_id", 1]]
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mAuthentication Exists (0.2ms)[0m  [1mSELECT  1 AS one FROM "authentications" WHERE "authentications"."user_id" = $1 LIMIT 1[0m  [["user_id", 1]]
+  [1m[35mAuthentication Exists (0.2ms)[0m  SELECT  1 AS one FROM "authentications" WHERE "authentications"."user_id" = $1 LIMIT 1  [["user_id", 1]]
+  [1m[36m (0.1ms)[0m  [1mCOMMIT[0m
+  [1m[35mAccount Load (0.6ms)[0m  SELECT  "accounts".* FROM "accounts" WHERE "accounts"."code" = $1 LIMIT 1  [["code", "canvasstarterapp"]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mAccount Exists (0.3ms)[0m  SELECT  1 AS one FROM "accounts" WHERE "accounts"."domain" = 'canvasstarterapp.ngrok.io' LIMIT 1
+  [1m[36mAccount Exists (0.3ms)[0m  [1mSELECT  1 AS one FROM "accounts" WHERE "accounts"."code" = 'canvasstarterapp' LIMIT 1[0m
+  [1m[35mAccount Exists (0.2ms)[0m  SELECT  1 AS one FROM "accounts" WHERE "accounts"."lti_secret" = '7c41a4bde9a07ec9490c876d5c69f99148393c24de27d8c0142f02c4764168207a9864a7ba4273420713fbd8309ac163a23b9b301f524c4ce77a01c36768a143' LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "accounts" ("code", "name", "domain", "lti_key", "lti_secret", "canvas_uri", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"[0m  [["code", "canvasstarterapp"], ["name", "Canvas Starter App"], ["domain", "canvasstarterapp.ngrok.io"], ["lti_key", "canvasstarterapp"], ["lti_secret", "7c41a4bde9a07ec9490c876d5c69f99148393c24de27d8c0142f02c4764168207a9864a7ba4273420713fbd8309ac163a23b9b301f524c4ce77a01c36768a143"], ["canvas_uri", "http://localhost:3000"], ["created_at", "2015-09-01 21:44:14.936266"], ["updated_at", "2015-09-01 21:44:14.936266"]]
+  [1m[35m (0.3ms)[0m  COMMIT
+  [1m[36mAccount Load (0.3ms)[0m  [1mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."code" = $1 LIMIT 1[0m  [["code", "canvasstarterapp"]]
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mAuthentication Exists (0.1ms)[0m  [1mSELECT  1 AS one FROM "authentications" WHERE "authentications"."user_id" = $1 LIMIT 1[0m  [["user_id", 1]]
+  [1m[35mAuthentication Exists (0.1ms)[0m  SELECT  1 AS one FROM "authentications" WHERE "authentications"."user_id" = $1 LIMIT 1  [["user_id", 1]]
+  [1m[36mSQL (0.3ms)[0m  [1mUPDATE "users" SET "account_id" = $1, "updated_at" = $2 WHERE "users"."id" = $3[0m  [["account_id", 1], ["updated_at", "2015-09-01 21:44:14.941279"], ["id", 1]]
+  [1m[35m (0.3ms)[0m  COMMIT
